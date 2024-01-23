@@ -8,12 +8,31 @@
 import SwiftUI
 
 struct EmojiArtDocumentView: View {
+    @ObservedObject var document: EmojiArtDocument
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
     
+    private let paletteSize : CGFloat = 80
     var body: some View {
-        VStack {
-            Color.yellow
+        VStack(spacing: 0) {
+            documentBody
             ScrollingEmojis(emojis)
+                .font(.system(size: paletteSize))
+                .padding(.horizontal)
+                .scrollIndicators(.hidden)
+        }
+    }
+    
+    private var documentBody: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Color.white
+                // image here
+                ForEach(document.emojis) { emoji in
+                    Text(emoji.string)
+                        .font(emoji.font)
+                        .position(emoji.position.in(geometry))
+                }
+            }
         }
     }
 }
@@ -37,5 +56,5 @@ struct ScrollingEmojis: View {
 }
 
 #Preview {
-    EmojiArtDocumentView()
+    EmojiArtDocumentView(document: EmojiArtDocument())
 }
