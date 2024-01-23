@@ -12,6 +12,8 @@ struct EmojiArtDocumentView: View {
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
     
     private let paletteSize : CGFloat = 80
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             documentBody
@@ -26,7 +28,8 @@ struct EmojiArtDocumentView: View {
         GeometryReader { geometry in
             ZStack {
                 Color.white
-                // image here
+                AsyncImage(url: document.background)
+                    .position(EmojiArt.Emoji.Position.zero.in(geometry))
                 ForEach(document.emojis) { emoji in
                     Text(emoji.string)
                         .font(emoji.font)
