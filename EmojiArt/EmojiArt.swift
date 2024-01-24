@@ -30,6 +30,7 @@ struct EmojiArt {
         var size: Int
         var id: Int
         
+        // coordinates relative to the center of its parent
         struct Position{
             var x: Int
             var y: Int
