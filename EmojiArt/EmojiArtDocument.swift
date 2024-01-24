@@ -9,7 +9,7 @@ import SwiftUI
 
 class EmojiArtDocument: ObservableObject {
     typealias Emoji = EmojiArt.Emoji
-    private var emojiArt = EmojiArt()
+    @Published private var emojiArt = EmojiArt()
     init() {
         setBackground(URL(string:"https://www.bing.com/th?id=OHR.SantaCruzSunrise_EN-US6436233856_1920x1080.webp&qlt=50"))
         addEmoji("hello", at: .init(x: 200, y: 100), size: 50)
