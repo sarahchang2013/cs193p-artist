@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+typealias CGOffset = CGSize
+
 extension String {
     // (inefficiently) remove duplicate characters and preserve order
     var uniqued: String {
