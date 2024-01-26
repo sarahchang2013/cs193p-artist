@@ -28,3 +28,13 @@ extension CGRect {
         self.init(origin: CGPoint(x:center.x-size.width/2, y:center.y-size.height/2),size: size)
     }
 }
+
+extension CGOffset {
+    static func +(lop: CGOffset, rop: CGOffset) -> CGOffset {
+        CGOffset(width: lop.width + rop.width, height: lop.height + rop.height)
+    }
+    
+    static func +=(lop: inout CGOffset, rop: CGOffset) {
+        lop = lop + rop
+    }
+}
