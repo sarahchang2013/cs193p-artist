@@ -27,7 +27,7 @@ struct EmojiArtDocumentView: View {
     private var documentBody: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.white
+                Color.blue
                 documentContents(in: geometry)
                     .scaleEffect(zoom * zoomState)
                     .offset(pan + panState)
@@ -85,7 +85,7 @@ struct EmojiArtDocumentView: View {
                     document.addEmoji(
                         emoji,
                         at: dropPosition(location, in: geometry),
-                        size: paletteSize)
+                        size: paletteSize/zoom)
                     return true
                 default:
                     break
@@ -97,7 +97,9 @@ struct EmojiArtDocumentView: View {
     // convert the location of drop to the position relative to center
     private func dropPosition(_ point: CGPoint, in geometry: GeometryProxy) -> EmojiArt.Emoji.Position {
         let center = geometry.frame(in: .local).center
-        return EmojiArt.Emoji.Position(x: Int(point.x - center.x), y: Int(center.y - point.y))
+        //print("center x: \(center.x) center y: \(center.y)")
+        //de-pan/zoom the emoji, otherwise it pans/zooms with the documentContents
+        return EmojiArt.Emoji.Position(x: Int((point.x - center.x - pan.width)/zoom), y: Int(-(point.y - center.y - pan.height)/zoom))
     }
 }
 
