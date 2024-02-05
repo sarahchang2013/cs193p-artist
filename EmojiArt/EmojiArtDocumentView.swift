@@ -17,7 +17,7 @@ struct EmojiArtDocumentView: View {
     var body: some View {
         VStack(spacing: 0) {
             documentBody
-            ScrollingEmojis(emojis)
+            PaletteChooser()
                 .font(.system(size: paletteSize))
                 .padding(.horizontal)
                 .scrollIndicators(.hidden)
@@ -100,25 +100,6 @@ struct EmojiArtDocumentView: View {
         //print("center x: \(center.x) center y: \(center.y)")
         //de-pan/zoom the emoji, otherwise it pans/zooms with the documentContents
         return EmojiArt.Emoji.Position(x: Int((point.x - center.x - pan.width)/zoom), y: Int(-(point.y - center.y - pan.height)/zoom))
-    }
-}
-
-struct ScrollingEmojis: View {
-    let emojis: [String]
-    
-    init(_ emojis: String) {
-        self.emojis = emojis.uniqued.map{ String($0)}
-    }
-    
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(emojis, id: \.self) { emoji in
-                    Text(emoji)
-                        .draggable(emoji)
-                }
-            }
-        }
     }
 }
 
