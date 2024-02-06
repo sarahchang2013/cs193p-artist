@@ -9,21 +9,21 @@ import SwiftUI
 class PaletteStore: ObservableObject {
     let name: String
     
-    @Published var palettes: [Palette] {
+    @Published var paletteSet: [Palette] {
         didSet {
             //check oldValue to avoid infinite loop
-            if palettes.isEmpty, !oldValue.isEmpty {
-                palettes = oldValue
+            if paletteSet.isEmpty, !oldValue.isEmpty {
+                paletteSet = oldValue
             }
         }
     }
     
     init(named name: String) {
         self.name = name
-        palettes = Palette.builtins
+        paletteSet = Palette.builtins
         // in case builtin gives empty palette
-        if palettes.isEmpty {
-            palettes = [Palette(name: "Warning", emojis: "⚠️")]
+        if paletteSet.isEmpty {
+            paletteSet = [Palette(name: "Warning", emojis: "⚠️")]
         }
     }
     
@@ -35,9 +35,9 @@ class PaletteStore: ObservableObject {
     }
     
     private func boundsCheckedPaletteIndex(_ index: Int) -> Int {
-        var index = index % palettes.count
+        var index = index % paletteSet.count
         if index < 0 {
-            index += palettes.count
+            index += paletteSet.count
         }
         return index
     }
@@ -46,16 +46,16 @@ class PaletteStore: ObservableObject {
     
     // these functions are the recommended way to add Palettes to the PaletteStore
     // since they try to avoid duplication of Identifiable-ly identical Palettes
-    // by first removing/replacing any Palette with the same id that is already in palettes
+    // by first removing/replacing any Palette with the same id that is already in paletteSet
     // it does not "remedy" existing duplication, it just does not "cause" new duplication
     
     func insert(_ palette: Palette, at insertionIndex: Int? = nil) { // "at" default is cursorIndex
         let insertionIndex = boundsCheckedPaletteIndex(insertionIndex ?? cursorIndex)
-        if let index = palettes.firstIndex(where: { $0.id == palette.id }) {
-            palettes.move(fromOffsets: IndexSet([index]), toOffset: insertionIndex)
-            palettes.replaceSubrange(insertionIndex...insertionIndex, with: [palette])
+        if let index = paletteSet.firstIndex(where: { $0.id == palette.id }) {
+            paletteSet.move(fromOffsets: IndexSet([index]), toOffset: insertionIndex)
+            paletteSet.replaceSubrange(insertionIndex...insertionIndex, with: [palette])
         } else {
-            palettes.insert(palette, at: insertionIndex)
+            paletteSet.insert(palette, at: insertionIndex)
         }
     }
     
@@ -63,16 +63,16 @@ class PaletteStore: ObservableObject {
         insert(Palette(name: name, emojis: emojis), at: index)
     }
     
-    func append(_ palette: Palette) { // at end of palettes
-        if let index = palettes.firstIndex(where: { $0.id == palette.id }) {
-            if palettes.count == 1 {
-                palettes = [palette]
+    func append(_ palette: Palette) { // at end of paletteSet
+        if let index = paletteSet.firstIndex(where: { $0.id == palette.id }) {
+            if paletteSet.count == 1 {
+                paletteSet = [palette]
             } else {
-                palettes.remove(at: index)
-                palettes.append(palette)
+                paletteSet.remove(at: index)
+                paletteSet.append(palette)
             }
         } else {
-            palettes.append(palette)
+            paletteSet.append(palette)
         }
     }
     

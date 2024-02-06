@@ -13,7 +13,7 @@ struct PaletteChooser: View {
     var body: some View {
         HStack {
             chooser
-            view(for: store.palettes[store.cursorIndex])
+            view(for: store.paletteSet[store.cursorIndex])
         }
     }
     

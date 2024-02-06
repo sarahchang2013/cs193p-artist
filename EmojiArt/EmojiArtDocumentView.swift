@@ -39,7 +39,7 @@ struct EmojiArtDocumentView: View {
         }
     }
     
-    @State private var zoom: CGFloat = 2
+    @State private var zoom: CGFloat = 1
     @State private var pan: CGOffset = .zero
     @GestureState private var zoomState: CGFloat = 1
     @GestureState private var panState: CGOffset = .zero
