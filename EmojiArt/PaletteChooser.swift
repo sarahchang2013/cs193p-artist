@@ -20,13 +20,17 @@ struct PaletteChooser: View {
     }
     
     private var chooser: some View {
-        Button{
+        AnimatedActionButton(systemImage:"paintpalette"){
             //pressing the palette icon causes the cursor to increase, with animation that changes palette view
-            withAnimation{
                 store.cursorIndex += 1
+        }
+        .contextMenu{
+            AnimatedActionButton("New",systemImage: "plus"){
+                store.insert(name:"Road Signs", emojis:"⚠️🚸🚷")
             }
-        } label: {
-            Image(systemName: "paintpalette")
+            AnimatedActionButton("Delete",systemImage: "minus.circle",role:.destructive){
+                store.paletteSet.remove(at: store.cursorIndex)
+            }
         }
     }
     
