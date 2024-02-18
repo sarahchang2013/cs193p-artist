@@ -15,11 +15,16 @@ struct PaletteChooser: View {
             chooser
             view(for: store.paletteSet[store.cursorIndex])
         }
+        //otherwise replaced palette still hovers
+        .clipped()
     }
     
     private var chooser: some View {
         Button{
-            
+            //pressing the palette icon causes the cursor to increase, with animation that changes palette view
+            withAnimation{
+                store.cursorIndex += 1
+            }
         } label: {
             Image(systemName: "paintpalette")
         }
@@ -30,6 +35,10 @@ struct PaletteChooser: View {
             Text(palette.name)
             ScrollingEmojis(palette.emojis)
         }
+        //change id to replace the palette view
+        .id(palette.id)
+        //rolling effect
+        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
     }
 }
 
