@@ -27,7 +27,7 @@ struct EmojiArtDocumentView: View {
     private var documentBody: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.blue
+                Color.white
                 documentContents(in: geometry)
                     .scaleEffect(zoom * zoomState)
                     .offset(pan + panState)
@@ -66,7 +66,17 @@ struct EmojiArtDocumentView: View {
     
     @ViewBuilder
     private func documentContents(in geometry: GeometryProxy) -> some View {
-        AsyncImage(url: document.background)
+        AsyncImage(url: document.background) { phase in
+            if let image = phase.image{
+                image
+            } else if let url = document.background {
+                if phase.error != nil {
+                    Text("\(url):" + (phase.error?.localizedDescription ?? "error"))
+                } else {
+                    ProgressView()
+                }
+            }
+        }
             .position(EmojiArt.Emoji.Position.zero.in(geometry))
         ForEach(document.emojis) { emoji in
             Text(emoji.string)
