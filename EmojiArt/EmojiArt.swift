@@ -27,6 +27,15 @@ struct EmojiArt: Codable {
         }
     }
     
+    init() {
+        // default init function
+    }
+    
+    init(json: Data) throws{
+        // value type EmojiArt can replace itself
+        self = try JSONDecoder().decode(EmojiArt.self, from: json)
+    }
+    
     mutating func addEmoji(_ emoji: String, at position: Emoji.Position, size: Int) {
         uniqueEmojiId += 1
         emojis.append(Emoji(

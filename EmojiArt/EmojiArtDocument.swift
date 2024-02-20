@@ -33,8 +33,11 @@ class EmojiArtDocument: ObservableObject {
     }
     
     init() {
-        addEmoji("🪽", at: .init(x: 200, y: 100), size: 50)
-        addEmoji("🫧", at: .init(x: -200, y: -100), size: 50)
+        // if either trial fails, use default emojiArt
+        if let jsonData = try? Data(contentsOf: autosaveURL),
+           let autosaved = try? EmojiArt(json: jsonData) {
+            emojiArt = autosaved
+        }
     }
     
     
