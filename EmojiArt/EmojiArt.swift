@@ -48,7 +48,7 @@ struct EmojiArt: Codable {
     
     func json() throws-> Data{
         let encoded = try JSONEncoder().encode(self)
-        print("Encoded JSON: \(String(data:encoded, encoding:.utf8) ?? "")")
+        //print("Encoded JSON: \(String(data:encoded, encoding:.utf8) ?? "")")
         return encoded
     }
 }

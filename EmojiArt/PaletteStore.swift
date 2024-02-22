@@ -9,21 +9,26 @@ import SwiftUI
 class PaletteStore: ObservableObject {
     let name: String
     
-    @Published var paletteSet: [Palette] {
-        didSet {
-            //check oldValue to avoid infinite loop
-            if paletteSet.isEmpty, !oldValue.isEmpty {
-                paletteSet = oldValue
+    var paletteSet: [Palette] {
+        get {
+            UserDefaults.standard.palette_set(forKey: name)
+        }
+        set {
+            if !newValue.isEmpty {
+                UserDefaults.standard.set(newValue, forKey: name)
+                objectWillChange.send()
             }
         }
     }
     
     init(named name: String) {
         self.name = name
-        paletteSet = Palette.builtins
-        // in case builtin gives empty palette
         if paletteSet.isEmpty {
-            paletteSet = [Palette(name: "Warning", emojis: "⚠️")]
+            paletteSet = Palette.builtins
+            // in case builtin gives empty palette
+            if paletteSet.isEmpty {
+                paletteSet = [Palette(name: "Warning", emojis: "⚠️")]
+            }
         }
     }
     
@@ -78,5 +83,21 @@ class PaletteStore: ObservableObject {
     
     func append(name: String, emojis: String) {
         append(Palette(name: name, emojis: emojis))
+    }
+}
+
+extension UserDefaults {
+    func palette_set (forKey key: String) -> [Palette] {
+        if let jsonData = data(forKey: key),
+           let decodedJSON = try? JSONDecoder().decode([Palette].self, from: jsonData){
+            return decodedJSON
+        } else {
+            return []
+        }
+    }
+    
+    func set(_ paletteSet: [Palette], forKey key: String) {
+       let data = try? JSONEncoder().encode(paletteSet)
+       set(data, forKey:key)
     }
 }
