@@ -25,12 +25,30 @@ struct PaletteChooser: View {
                 store.cursorIndex += 1
         }
         .contextMenu{
+            // long-pressing the palette icon brings up the menu
+            gotoMenu
             AnimatedActionButton("New",systemImage: "plus"){
                 store.insert(name:"Road Signs", emojis:"⚠️🚸🚷")
             }
             AnimatedActionButton("Delete",systemImage: "minus.circle",role:.destructive){
                 store.paletteSet.remove(at: store.cursorIndex)
             }
+        }
+    }
+    
+    private var gotoMenu: some View {
+        Menu {
+            ForEach(store.paletteSet) { palette in
+                AnimatedActionButton(palette.name){
+                    //find the chosen palette in paletteSet
+                    if let index = store.paletteSet.firstIndex(where:{$0.id == palette.id}){
+                        // set shown palette to the chosen one
+                        store.cursorIndex = index
+                    }
+                }
+            }
+        } label: {
+            Label("Go To", systemImage: "text.insert")
         }
     }
     
