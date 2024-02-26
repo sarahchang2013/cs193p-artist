@@ -32,9 +32,18 @@ struct PaletteList: View {
             }
             //destination when navigate out of the List
             .navigationDestination(for:Palette.self){ palette in
-                PaletteView(palette: palette)
+                if let index = store.paletteSet.firstIndex(where: {$0.id == palette.id}) {
+                    PaletteEditor(palette: $store.paletteSet[index])
+                }
             }
             .navigationTitle("\(store.name)")
+            .toolbar {
+                Button {
+                    store.insert(name: "", emojis: "")
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
         }
     }
 }
