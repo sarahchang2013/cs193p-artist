@@ -10,6 +10,7 @@ import SwiftUI
 struct PaletteList: View {
     //use the injected EnvironmentObject in EmojiArtApp
     @EnvironmentObject var store: PaletteStore
+    @State private var showCurrentPalette = false
     
     var body: some View {
         NavigationStack {
@@ -36,10 +37,14 @@ struct PaletteList: View {
                     PaletteEditor(palette: $store.paletteSet[index])
                 }
             }
+            .navigationDestination(isPresented: $showCurrentPalette) {
+                PaletteEditor(palette: $store.paletteSet[store.cursorIndex])
+            }
             .navigationTitle("\(store.name)")
             .toolbar {
                 Button {
                     store.insert(name: "", emojis: "")
+                    showCurrentPalette = true
                 } label: {
                     Image(systemName: "plus")
                 }
