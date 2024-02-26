@@ -16,9 +16,19 @@ struct PaletteList: View {
             List {
                 ForEach(store.paletteSet) { palette in
                     NavigationLink(value: palette){
-                        Text(palette.name)
+                        VStack(alignment:.leading) {
+                            Text(palette.name)
+                            Text(palette.emojis).lineLimit(1)
+                        }
                     }
                 }
+                .onDelete { indexSet in
+                    store.paletteSet.remove(atOffsets: indexSet)
+                }
+                .onMove { indices, newOffset in
+                    store.paletteSet.move(fromOffsets: indices, toOffset: newOffset)
+                }
+                
             }
             //destination when navigate out of the List
             .navigationDestination(for:Palette.self){ palette in
