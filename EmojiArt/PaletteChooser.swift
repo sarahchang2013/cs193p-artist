@@ -33,7 +33,8 @@ struct PaletteChooser: View {
             // long-pressing the palette icon brings up the menu
             gotoMenu
             AnimatedActionButton("New",systemImage: "plus"){
-                store.insert(name:"Road Signs", emojis:"⚠️🚸🚷")
+                store.insert(name:"", emojis:"")
+                showPaletteEditor = true
             }
             AnimatedActionButton("Delete",systemImage: "minus.circle",role:.destructive){
                 store.paletteSet.remove(at: store.cursorIndex)

@@ -51,4 +51,7 @@ struct EmojiArt: Codable {
         //print("Encoded JSON: \(String(data:encoded, encoding:.utf8) ?? "")")
         return encoded
     }
+    
+    // TODO: - Remove an emoji from canvas
+    // remove the emoji which has the same position as tapped
 }
