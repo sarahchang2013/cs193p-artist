@@ -67,7 +67,16 @@ class EmojiArtDocument: ObservableObject {
         if let url = emojiArt.background {
             background = .fetching(url)
             do {
-                background = try await .found(fetchUIImage(from: url))
+                let image = try await fetchUIImage(from: url)
+                // If while fetching, user dropped another fast url,
+                // it finished updating background first.
+                // slow url's function stack still holds old url,
+                // but background url is changed on heap,
+                // when the slow url returns an image,
+                // make sure the latter returned image doesn't update UI
+                if url == emojiArt.background {
+                    background = .found(image)
+                }
             } catch {
                 // or failed
                 background = .failed("Couldn't set background: \(error.localizedDescription)")
