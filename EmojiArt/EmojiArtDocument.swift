@@ -12,6 +12,13 @@ class EmojiArtDocument: ObservableObject {
     @Published private var emojiArt = EmojiArt() {
         didSet{
             autosave()
+            //if user changes background url, run state machine
+            if emojiArt.background != oldValue.background {
+                // fork it off because didSet cannot be async function
+                Task {
+                    await fetchBackgroundImage()
+                }
+            }
         }
     }
     
@@ -45,12 +52,46 @@ class EmojiArtDocument: ObservableObject {
         emojiArt.emojis
     }
     
-    var background: URL? {
-        emojiArt.background
-    }
+//    var background: URL? {
+//        emojiArt.background
+//    }
+    
+    // have UI to watch the states of background.
+    @Published var background: Background = .none
     
     // MARK: - Background Image
-    //use enum as a state machine to switch between different states of UI background
+    //use an enum as a state machine to switch between different states of UI background
+    @MainActor
+    // any UI updates need to be in MainActor thread to remove deadly purple runtime error
+    private func fetchBackgroundImage() async {
+        if let url = emojiArt.background {
+            background = .fetching(url)
+            do {
+                background = try await .found(fetchUIImage(from: url))
+            } catch {
+                // or failed
+                background = .failed("Couldn't set background: \(error.localizedDescription)")
+            }
+        } else {
+            background = .none
+        }
+    }
+    
+    // async function to unblock UI thread
+    private func fetchUIImage(from url: URL) async throws-> UIImage {
+        let (data, _) = try await URLSession.shared.data(from: url)
+        // UIImage returns nil if found no jpeg
+        if let uiImage =  UIImage(data: data) {
+            return uiImage
+        } else {
+            throw FetchError.badImageData
+        }
+    }
+    
+    enum FetchError: Error {
+        case badImageData
+    }
+    
     enum Background {
         case none
         //(X) is enum associated value, indicates case xx can only be X type.
