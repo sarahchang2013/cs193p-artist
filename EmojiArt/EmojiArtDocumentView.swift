@@ -28,6 +28,11 @@ struct EmojiArtDocumentView: View {
         GeometryReader { geometry in
             ZStack {
                 Color.white
+                if document.background.isFetching {
+                    ProgressView()
+                        .scaleEffect(2)
+                        .tint(.blue)
+                }
                 documentContents(in: geometry)
                     .scaleEffect(zoom * zoomState)
                     .offset(pan + panState)
