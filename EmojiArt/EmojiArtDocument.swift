@@ -49,6 +49,39 @@ class EmojiArtDocument: ObservableObject {
         emojiArt.background
     }
     
+    // MARK: - Background Image
+    //use enum as a state machine to switch between different states of UI background
+    enum Background {
+        case none
+        //(X) is enum associated value, indicates case xx can only be X type.
+        case fetching(URL)
+        case found(UIImage)
+        case failed(String)
+        
+        var uiImage: UIImage? {
+            switch self {
+            case .found(let uiImage): return uiImage
+            default: return nil
+            }
+        }
+        
+        var urlBeingFetched: URL? {
+            switch self {
+            case .fetching(let url): return url
+            default: return nil
+            }
+        }
+        
+        var isFetching: Bool { urlBeingFetched != nil }
+        
+        var failureReason: String? {
+            switch self {
+            case .failed(let reason): return reason
+            default: return nil
+            }
+        }
+    }
+    
     //MARK: - Intent(s)
     
     func setBackground(_ url: URL?) {

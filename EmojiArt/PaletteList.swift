@@ -33,7 +33,9 @@ struct PaletteList: View {
             }
             //destination when navigate out of the List
             .navigationDestination(for:Palette.self){ palette in
+                //find the chosen one on UI in data model
                 if let index = store.paletteSet.firstIndex(where: {$0.id == palette.id}) {
+                    //use binding(reference), not the local var palette
                     PaletteEditor(palette: $store.paletteSet[index])
                 }
             }
