@@ -44,6 +44,9 @@ struct EmojiArtDocumentView: View {
             .onChange(of: document.background.failureReason) { reason in
                 showBackgroundFailureAlert = (reason != nil)
             }
+            .onChange(of: document.background.uiImage) { uiImage in
+                zoomToFit(uiImage?.size, in: geometry)
+            }
             .alert(
                 "Set Background",
                 isPresented: $showBackgroundFailureAlert,
@@ -97,17 +100,17 @@ struct EmojiArtDocumentView: View {
     private func drop(_ sturldatas: [Sturldata], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         for sturldata in sturldatas {
             switch sturldata{
-                case .url(let url):
-                    document.setBackground(url)
-                    return true
-                case .string(let emoji):
-                    document.addEmoji(
-                        emoji,
-                        at: dropPosition(location, in: geometry),
-                        size: paletteSize/zoom)
-                    return true
-                default:
-                    break
+            case .url(let url):
+                document.setBackground(url)
+                return true
+            case .string(let emoji):
+                document.addEmoji(
+                    emoji,
+                    at: dropPosition(location, in: geometry),
+                    size: paletteSize/zoom)
+                return true
+            default:
+                break
             }
         }
         return false
@@ -120,7 +123,29 @@ struct EmojiArtDocumentView: View {
         //de-pan/zoom the emoji, otherwise it pans/zooms with the documentContents
         return EmojiArt.Emoji.Position(x: Int((point.x - center.x - pan.width)/zoom), y: Int(-(point.y - center.y - pan.height)/zoom))
     }
+    
+    private func zoomToFit(_ size: CGSize?, in geometry: GeometryProxy) {
+        if let size {
+            zoomToFit(CGRect(center: .zero, size: size), in: geometry)
+        }
+    }
+    
+    private func zoomToFit(_ rect: CGRect, in geometry: GeometryProxy) {
+        withAnimation {
+            if rect.size.width > 0, rect.size.height > 0,
+               geometry.size.width > 0, geometry.size.height > 0 {
+                let hZoom = geometry.size.width / rect.size.width
+                let vZoom = geometry.size.height / rect.size.height
+                zoom = min(hZoom, vZoom)
+                pan = CGOffset(
+                    width: -rect.midX * zoom,
+                    height: -rect.midY * zoom
+                )
+            }
+        }
+    }
 }
+
 
 #Preview {
     EmojiArtDocumentView(document: EmojiArtDocument())
