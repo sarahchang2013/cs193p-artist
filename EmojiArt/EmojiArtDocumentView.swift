@@ -41,9 +41,20 @@ struct EmojiArtDocumentView: View {
             .dropDestination(for: Sturldata.self) {sturldatas, location in
                 return drop(sturldatas, at: location, in:geometry)
             }
+            .onChange(of: document.background.failureReason) { reason in
+                showBackgroundFailureAlert = (reason != nil)
+            }
+            .alert(
+                "Set Background",
+                isPresented: $showBackgroundFailureAlert,
+                presenting: document.background.failureReason,
+                actions: {_ in Button("OK", role: .cancel){}},
+                message: {reason in Text(reason)}
+            )
         }
     }
     
+    @State private var showBackgroundFailureAlert = false
     @State private var zoom: CGFloat = 1
     @State private var pan: CGOffset = .zero
     @GestureState private var zoomState: CGFloat = 1
