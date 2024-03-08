@@ -52,7 +52,19 @@ class EmojiArtDocument: ObservableObject {
         emojiArt.emojis
     }
     
-//    var background: URL? {
+    // bounding box, union of all emojis' and background's bbox
+    var bbox: CGRect {
+        var bbox = CGRect.zero
+        for emoji in emojiArt.emojis {
+            bbox = bbox.union(emoji.bbox)
+        }
+        if let backgroundSize = background.uiImage?.size {
+            bbox = bbox.union(CGRect(center: .zero, size: backgroundSize))
+        }
+        return bbox
+    }
+    
+    //    var background: URL? {
 //        emojiArt.background
 //    }
     
@@ -147,11 +159,20 @@ extension EmojiArt.Emoji {
     var font: Font {
         Font.system(size: CGFloat(size))
     }
+    
+    var bbox: CGRect {
+        CGRect(
+            // absolute position, no frame
+            center: position.in(nil),
+            size: CGSize(width: CGFloat(size), height: CGFloat(size))
+        )
+    }
 }
 
 extension EmojiArt.Emoji.Position {
-    func `in`(_ geometry: GeometryProxy) -> CGPoint {
-        let center = geometry.frame(in: .local).center
+    func `in`(_ geometry: GeometryProxy?) -> CGPoint {
+        // no frame when getting bbox of an emoji
+        let center = geometry?.frame(in: .local).center ?? .zero
         return CGPoint(x: center.x + CGFloat(x), y: center.y - CGFloat(y))
         
     }

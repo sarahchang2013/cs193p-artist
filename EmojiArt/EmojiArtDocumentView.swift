@@ -38,6 +38,10 @@ struct EmojiArtDocumentView: View {
                     .offset(pan + panState)
             }
             .gesture(panGesture.simultaneously(with: zoomGesture))
+            .onTapGesture(count: 2){
+                // bbox: bounding box
+                zoomToFit(document.bbox, in: geometry)
+            }
             .dropDestination(for: Sturldata.self) {sturldatas, location in
                 return drop(sturldatas, at: location, in:geometry)
             }
