@@ -38,6 +38,7 @@ struct EmojiArtDocumentView: View {
                     .offset(pan + panState)
             }
             .gesture(panGesture.simultaneously(with: zoomGesture))
+            // double tap to show all emojis
             .onTapGesture(count: 2){
                 // bbox: bounding box
                 zoomToFit(document.bbox, in: geometry)
@@ -48,9 +49,11 @@ struct EmojiArtDocumentView: View {
             .onChange(of: document.background.failureReason) { reason in
                 showBackgroundFailureAlert = (reason != nil)
             }
+            // zoom the background image to fit canvas when it's dropped
             .onChange(of: document.background.uiImage) { uiImage in
                 zoomToFit(uiImage?.size, in: geometry)
             }
+            // actions and message use available data given by presenting
             .alert(
                 "Set Background",
                 isPresented: $showBackgroundFailureAlert,
@@ -130,6 +133,7 @@ struct EmojiArtDocumentView: View {
     
     private func zoomToFit(_ size: CGSize?, in geometry: GeometryProxy) {
         if let size {
+            // center: see extension of CGRect
             zoomToFit(CGRect(center: .zero, size: size), in: geometry)
         }
     }
@@ -138,6 +142,7 @@ struct EmojiArtDocumentView: View {
         withAnimation {
             if rect.size.width > 0, rect.size.height > 0,
                geometry.size.width > 0, geometry.size.height > 0 {
+                // pick the smaller of horizontal and vertical ratio to fit in
                 let hZoom = geometry.size.width / rect.size.width
                 let vZoom = geometry.size.height / rect.size.height
                 zoom = min(hZoom, vZoom)

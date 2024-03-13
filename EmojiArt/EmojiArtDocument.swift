@@ -162,7 +162,7 @@ extension EmojiArt.Emoji {
     
     var bbox: CGRect {
         CGRect(
-            // absolute position, no frame
+            // absolute position, no need of a view's geometry
             center: position.in(nil),
             size: CGSize(width: CGFloat(size), height: CGFloat(size))
         )
@@ -171,7 +171,8 @@ extension EmojiArt.Emoji {
 
 extension EmojiArt.Emoji.Position {
     func `in`(_ geometry: GeometryProxy?) -> CGPoint {
-        // no frame when getting bbox of an emoji
+        // no geometry needed when getting bbox of an emoji
+        // .zero is the (0,0) of default coordinate system
         let center = geometry?.frame(in: .local).center ?? .zero
         return CGPoint(x: center.x + CGFloat(x), y: center.y - CGFloat(y))
         
