@@ -162,7 +162,9 @@ extension EmojiArt.Emoji {
     
     var bbox: CGRect {
         CGRect(
-            // absolute position, no need of a view's geometry
+            // here center is .zero of IOS coordinate system
+            // final bbox is relative to .zero,
+            // only need its center's vector for zoomToFit's rect.midX/Y
             center: position.in(nil),
             size: CGSize(width: CGFloat(size), height: CGFloat(size))
         )
@@ -174,6 +176,7 @@ extension EmojiArt.Emoji.Position {
         // no geometry needed when getting bbox of an emoji
         // .zero is the (0,0) of default coordinate system
         let center = geometry?.frame(in: .local).center ?? .zero
+        // convert Position to values in IOS coordinate system
         return CGPoint(x: center.x + CGFloat(x), y: center.y - CGFloat(y))
         
     }

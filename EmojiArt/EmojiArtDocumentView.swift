@@ -147,6 +147,7 @@ struct EmojiArtDocumentView: View {
                 let vZoom = geometry.size.height / rect.size.height
                 zoom = min(hZoom, vZoom)
                 pan = CGOffset(
+                    // reverse bbox's position vector to move it back
                     width: -rect.midX * zoom,
                     height: -rect.midY * zoom
                 )

@@ -18,7 +18,8 @@ struct EmojiArt: Codable {
         var size: Int
         var id: Int
         
-        // coordinates relative to the center of its parent
+        // converted coordinate values relative to center of parent
+        // x axis grows rightward, y axis grows upwards
         struct Position: Codable {
             var x: Int
             var y: Int
