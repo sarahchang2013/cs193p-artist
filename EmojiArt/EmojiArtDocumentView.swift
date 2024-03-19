@@ -11,7 +11,7 @@ struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
     
-    private let paletteSize : CGFloat = 80
+    @ScaledMetric var paletteSize : CGFloat = 60
     
     
     var body: some View {
