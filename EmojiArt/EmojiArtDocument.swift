@@ -6,8 +6,28 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
-class EmojiArtDocument: ObservableObject {
+class EmojiArtDocument: ReferenceFileDocument {
+    func snapshot(contentType: UTType) throws -> Data {
+        <#code#>
+    }
+    
+    func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
+        <#code#>
+    }
+    
+    //error "fix" generates this, set it to Data, "fix" again to get other functions for Data
+    typealias Snapshot = Data
+    
+    static var readableContentTypes: [UTType] {
+        
+    }
+    
+    required init(configuration: ReadConfiguration) throws {
+        <#code#>
+    }
+    
     typealias Emoji = EmojiArt.Emoji
     @Published private var emojiArt = EmojiArt() {
         didSet{

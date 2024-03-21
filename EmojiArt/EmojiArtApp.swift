@@ -9,13 +9,11 @@ import SwiftUI
 
 @main
 struct EmojiArtApp: App {
-    @StateObject var defaultDocument = EmojiArtDocument()
     @StateObject var paletteStore = PaletteStore(named: "Main Palettes")
     var body: some Scene {
-        //This shares a view model across views, multiple windows show the same document,
-        // but pan and zoom are different for each view
-        WindowGroup {
-            EmojiArtDocumentView(document: defaultDocument)
+        // This creates new document(view model) for each window(view)
+        DocumentGroup (newDocument: {EmojiArtDocument()}) { config in
+            EmojiArtDocumentView(document: config.document)
                 .environmentObject(paletteStore)
         }
     }
