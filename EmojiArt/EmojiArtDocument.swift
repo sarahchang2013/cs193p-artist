@@ -8,30 +8,41 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+extension UTType {
+    static let emojiart = UTType(exportedAs: "cs193p.emojiart")
+}
+
 class EmojiArtDocument: ReferenceFileDocument {
+    // SwiftUI begins by calling the ``snapshot(contentType:)`` method to get
+    ///a copy of the document data in its current state.
     func snapshot(contentType: UTType) throws -> Data {
-        <#code#>
+        try emojiArt.json()
     }
     
     func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
-        <#code#>
+        //SwiftUI passes that snapshot to this method
+        FileWrapper(regularFileWithContents: snapshot)
     }
     
     //error "fix" generates this, set it to Data, "fix" again to get other functions for Data
     typealias Snapshot = Data
     
     static var readableContentTypes: [UTType] {
-        
+        [.emojiart]
     }
     
+    // initialize EmojiArtDocument from .emojiart file
     required init(configuration: ReadConfiguration) throws {
-        <#code#>
+        if let data = configuration.file.regularFileContents {
+            emojiArt = try EmojiArt(json: data)
+        } else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
     }
     
     typealias Emoji = EmojiArt.Emoji
     @Published private var emojiArt = EmojiArt() {
         didSet{
-            autosave()
             //if user changes background url, run state machine
             if emojiArt.background != oldValue.background {
                 // fork it off because didSet cannot be async function
@@ -42,31 +53,10 @@ class EmojiArtDocument: ReferenceFileDocument {
         }
     }
     
-    private let autosaveURL : URL = URL.documentsDirectory.appendingPathComponent("Autosaved.emojiart")
-    
-    private func autosave() {
-        save(to: autosaveURL)
-        //print("Autosaved to \(autosaveURL)")
-    }
-    
-    private func save(to url: URL) {
-        do {
-            let data = try emojiArt.json()
-            try data.write(to: url)
-        } catch let error {
-            print("EmojiArtDocument: error when saving \(error.localizedDescription)")
-        }
+    // required by DocumentGroup's parameter
+    init() {
         
     }
-    
-    init() {
-        // if either trial fails, use default emojiArt
-        if let jsonData = try? Data(contentsOf: autosaveURL),
-           let autosaved = try? EmojiArt(json: jsonData) {
-            emojiArt = autosaved
-        }
-    }
-    
     
     var emojis: [Emoji] {
         emojiArt.emojis
