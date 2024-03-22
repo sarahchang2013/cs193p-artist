@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EmojiArtDocumentView: View {
+    // undoManager: instance property in SwiftUI
     @Environment(\.undoManager) var undoManager
     @ObservedObject var document: EmojiArtDocument
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
@@ -22,6 +23,9 @@ struct EmojiArtDocumentView: View {
                 .font(.system(size: paletteSize))
                 .padding(.horizontal)
                 .scrollIndicators(.hidden)
+        }
+        .toolbar {
+            UndoButton()
         }
     }
     
