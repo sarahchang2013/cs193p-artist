@@ -10,7 +10,11 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     // undoManager: instance property in SwiftUI
     @Environment(\.undoManager) var undoManager
+    // Palette changes are shared in UserDefaults, but each window gets its own palette
+    @StateObject var paletteStore = PaletteStore(named: "Shared")
+    
     @ObservedObject var document: EmojiArtDocument
+    
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
     
     @ScaledMetric var paletteSize : CGFloat = 60
@@ -27,6 +31,7 @@ struct EmojiArtDocumentView: View {
         .toolbar {
             UndoButton()
         }
+        .environmentObject(paletteStore)
     }
     
     private var documentBody: some View {
