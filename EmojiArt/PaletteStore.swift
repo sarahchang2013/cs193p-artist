@@ -30,6 +30,26 @@ class PaletteStore: ObservableObject {
                 paletteSet = [Palette(name: "Warning", emojis: "⚠️")]
             }
         }
+        // notice palette changes to windows to update palettes on-the-spot
+        // observer stays in heap until its closure is called
+        observer = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main) { [weak self] notification in
+                // weak: will call deinit() to remove self from heap after closure is run
+                // otherwise PaletteStore is in heap with observer forever
+                self?.objectWillChange.send()
+            }
+    }
+    
+    // remove observer's referece to PaletteStore in heap
+    @State private var observer: NSObjectProtocol?
+    // deinit gets called when no reference to self exists
+    deinit {
+        print("remove observer")
+        if let observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     @Published private var _cursorIndex = 0
