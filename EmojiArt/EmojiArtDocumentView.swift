@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EmojiArtDocumentView: View {
+    @Environment(\.undoManager) var undoManager
     @ObservedObject var document: EmojiArtDocument
     private let emojis = "🐒🐣🐥🪿🦆🐦‍⬛🦅🦉🐝🦋🐌🐞🐜🐅🦓🐆🐘🐫🦒🦘🌳🌲🌹🌸🌼🌴🌻🌷🐑🐕🌥️☀️🌈"
     
@@ -108,13 +109,14 @@ struct EmojiArtDocumentView: View {
         for sturldata in sturldatas {
             switch sturldata{
             case .url(let url):
-                document.setBackground(url)
+                document.setBackground(url, undoWith: undoManager)
                 return true
             case .string(let emoji):
                 document.addEmoji(
                     emoji,
                     at: dropPosition(location, in: geometry),
-                    size: paletteSize/zoom)
+                    size: paletteSize/zoom,
+                    undoWith: undoManager)
                 return true
             default:
                 break

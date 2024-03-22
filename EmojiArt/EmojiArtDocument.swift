@@ -155,13 +155,31 @@ class EmojiArtDocument: ReferenceFileDocument {
     }
     
     //MARK: - Intent(s)
-    
-    func setBackground(_ url: URL?) {
-        emojiArt.background = url
+    // file isn't correctly saved without undo function
+    private func undoablyPerform(_ action: String, with undoManager: UndoManager? = nil, doit: () -> Void) {
+        let oldEmojiArt = emojiArt
+        doit()
+        undoManager?.registerUndo(withTarget: self) { myself in
+            // 1. closure captures local variable oldEmojiArt,
+            // and keeps it in heap to wait for undo operation
+            // 2. redoing is just undoing undo
+            myself.undoablyPerform(action, with: undoManager) {
+                myself.emojiArt = oldEmojiArt
+            }
+        }
+        undoManager?.setActionName(action)
     }
     
-    func addEmoji(_ emoji: String, at position: Emoji.Position, size: CGFloat){
-        emojiArt.addEmoji(emoji, at: position, size: Int(size))
+    func setBackground(_ url: URL?, undoWith undoManager: UndoManager? = nil) {
+        undoablyPerform("Set Background", with: undoManager) {
+            emojiArt.background = url
+        }
+    }
+    
+    func addEmoji(_ emoji: String, at position: Emoji.Position, size: CGFloat, undoWith undoManager: UndoManager? = nil) {
+        undoablyPerform("Add \(emoji)", with: undoManager) {
+            emojiArt.addEmoji(emoji, at: position, size: Int(size))
+        }
     }
 }
 
